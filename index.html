@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ASCII Media Studio - Yuqori aniqlik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            padding: 20px;
+            color: #00ff9d;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff9d;
+            font-size: 1.8rem;
+        }
+
+        .menu {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .menu-btn {
+            background: #1a1f2e;
+            border: 1px solid #00ff9d;
+            color: #00ff9d;
+            padding: 12px 24px;
+            font-family: monospace;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+
+        .menu-btn:hover, .menu-btn.active {
+            background: #00ff9d;
+            color: #0a0e1a;
+            box-shadow: 0 0 15px #00ff9d;
+        }
+
+        .panel {
+            display: none;
+            background: #0a0e1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00ff9d;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: #1a1f2e;
+            border: 1px solid #00ff9d;
+            color: #00ff9d;
+            font-family: monospace;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #00ff9d;
+            color: #0a0e1a;
+            border: none;
+            padding: 12px 30px;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px #00ff9d;
+        }
+
+        .ascii-output {
+            background: #000;
+            border: 1px solid #00ff9d;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 600px;
+            overflow: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            line-height: 1;
+            white-space: pre;
+        }
+
+        .ascii-output h3 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #00ff9d;
+        }
+
+        .status {
+            color: #ffaa00;
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1f2e;
+            border-radius: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            background: #1a1f2e;
+            border: 1px solid #333;
+            color: #888;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #00ff9d;
+            color: #0a0e1a;
+            border-color: #00ff9d;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .menu-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .ascii-output {
+                font-size: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎨 ASCII MEDIA STUDIO - Yuqori Aniqlik</h1>
+
+    <div class="menu">
+        <button class="menu-btn active" data-panel="video">📹 VIDEO</button>
+        <button class="menu-btn" data-panel="image">🖼️ RASM</button>
+        <button class="menu-btn" data-panel="youtube">🌍 YOUTUBE</button>
+        <button class="menu-btn" data-panel="camera">📸 KAMERA</button>
+    </div>
+
+    <!-- VIDEO PANELI -->
+    <div id="video-panel" class="panel active">
+        <div class="tabs">
+            <div class="tab active" data-tab="local-tab">📁 Mahalliy video</div>
+            <div class="tab" data-tab="url-tab">🔗 URL video</div>
+        </div>
+
+        <div id="local-tab" class="tab-content active">
+            <div class="input-group">
+                <label>📹 Video faylni tanlang:</label>
+                <input type="file" id="video-file" accept="video/*">
+            </div>
+            <button id="play-local">🎬 ASCII ga o'tkazish</button>
+        </div>
+
+        <div id="url-tab" class="tab-content">
+            <div class="input-group">
+                <label>🔗 Video URL:</label>
+                <input type="text" id="video-url" placeholder="https://example.com/video.mp4">
+            </div>
+            <button id="play-url">🎬 URL ni ASCII ga o'tkazish</button>
+        </div>
+
+        <div class="input-group">
+            <label>📏 Kenglik (px):</label>
+            <select id="video-width">
+                <option value="80">80px (Oddiy)</option>
+                <option value="100">100px (Yaxshi)</option>
+                <option value="120">120px (Aniq)</option>
+                <option value="150">150px (Juda aniq)</option>
+                <option value="200" selected>200px (MAXSUS - Eng aniq)</option>
+            </select>
+        </div>
+
+        <div id="video-output" class="ascii-output">
+            <h3>📺 ASCII Video</h3>
+            <pre id="video-content">Video tanlang...</pre>
+        </div>
+    </div>
+
+    <!-- RASM PANELI -->
+    <div id="image-panel" class="panel">
+        <div class="input-group">
+            <label>🖼️ Rasm faylni tanlang:</label>
+            <input type="file" id="image-file" accept="image/*">
+        </div>
+
+        <div class="input-group">
+            <label>🎨 ASCII usuli:</label>
+            <select id="ascii-method">
+                <option value="mono">Oq-qora ASCII (Aniq)</option>
+                <option value="color">Rangli ASCII (Chiroyli)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>📏 Kenglik (px): <span id="width-value">200</span></label>
+            <input type="range" id="ascii-width" min="40" max="200" value="200" step="10">
+        </div>
+
+        <button id="convert-image">🔄 ASCII ga o'tkazish</button>
+        <button id="save-image">💾 Saqlash</button>
+
+        <div id="image-output" class="ascii-output">
+            <h3>🖼️ ASCII San'at</h3>
+            <pre id="image-content">Rasm tanlang...</pre>
+        </div>
+    </div>
+
+    <!-- YOUTUBE PANELI -->
+    <div id="youtube-panel" class="panel">
+        <div class="input-group">
+            <label>🌍 YouTube havolasi:</label>
+            <input type="text" id="youtube-url" placeholder="https://youtu.be/...">
+        </div>
+        <div class="input-group">
+            <label>📏 Kenglik (px):</label>
+            <select id="youtube-width">
+                <option value="80">80px</option>
+                <option value="100">100px</option>
+                <option value="120">120px</option>
+                <option value="150">150px</option>
+                <option value="200" selected>200px (Eng aniq)</option>
+            </select>
+        </div>
+        <button id="fetch-youtube">📥 YouTube dan ASCII yaratish</button>
+        <div id="youtube-status" class="status" style="display:none;"></div>
+        <div id="youtube-output" class="ascii-output">
+            <h3>🎬 YouTube ASCII</h3>
+            <pre id="youtube-content">YouTube havolasini kiriting...</pre>
+        </div>
+    </div>
+
+    <!-- KAMERA PANELI -->
+    <div id="camera-panel" class="panel">
+        <div class="input-group">
+            <label>📸 Kameradan surat:</label>
+            <input type="file" id="camera-input" accept="image/*" capture="environment">
+        </div>
+        <button id="capture-photo">📸 Suratga ol va ASCII qil</button>
+        <div id="camera-output" class="ascii-output">
+            <h3>📸 Kamera ASCII</h3>
+            <pre id="camera-content">Suratga oling...</pre>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== ASOSIY FUNKSIYALAR ====================
+    
+    // Belgilar to'plami (yorqinlikka qarab)
+    const CHARS = '@%#*+=-:. ';
+    
+    // Rasmni ASCII ga o'tkazish (rangli yoki oq-qora)
+    function imageToAscii(img, width, method) {
+        const height = Math.floor(width * (img.height / img.width));
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const data = imageData.data;
+        
+        let ascii = '';
+        
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const idx = (y * width + x) * 4;
+                const r = data[idx];
+                const g = data[idx + 1];
+                const b = data[idx + 2];
+                const brightness = (r + g + b) / 3;
+                const charIndex = Math.floor(brightness * (CHARS.length - 1) / 255);
+                
+                if (method === 'color') {
+                    // Rangli ASCII - HTML span bilan
+                    ascii += `<span style="color: rgb(${r},${g},${b});">${CHARS[charIndex]}</span>`;
+                } else {
+                    ascii += CHARS[charIndex];
+                }
+            }
+            ascii += '\n';
+        }
+        
+        return ascii;
+    }
+    
+    // Fayldan rasm yuklash
+    function loadImageFromFile(file) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = URL.createObjectURL(file);
+        });
+    }
+    
+    // URL dan rasm yuklash
+    function loadImageFromUrl(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = url;
+        });
+    }
+    
+    // Video kadrlarini ASCII ga o'tkazish
+    let animationId = null;
+    let currentVideo = null;
+    
+    function startVideoAscii(videoElement, width, outputPre) {
+        const height = Math.floor(width * (videoElement.videoHeight / videoElement.videoWidth));
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        function drawFrame() {
+            if (videoElement.paused || videoElement.ended) return;
+            
+            ctx.drawImage(videoElement, 0, 0, width, height);
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            
+            let ascii = '';
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const idx = (y * width + x) * 4;
+                    const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                    const charIndex = Math.floor(brightness * (CHARS.length - 1) / 255);
+                    ascii += CHARS[charIndex];
+                }
+                ascii += '\n';
+            }
+            
+            outputPre.textContent = ascii;
+            animationId = requestAnimationFrame(drawFrame);
+        }
+        
+        videoElement.play();
+        drawFrame();
+    }
+    
+    // YouTube ID olish
+    function getYouTubeId(url) {
+        if (!url) return null;
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?#]+)/,
+            /youtube\.com\/embed\/([^?#]+)/
+        ];
+        for (const pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+    
+    // ==================== MENYU ====================
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const panelId = btn.dataset.panel + '-panel';
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+        });
+    });
+    
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const parent = tab.closest('.panel');
+            parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const tabId = tab.dataset.tab;
+            parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+    
+    // Kenglik slideri
+    const widthSlider = document.getElementById('ascii-width');
+    const widthValue = document.getElementById('width-value');
+    widthSlider.addEventListener('input', () => {
+        widthValue.textContent = widthSlider.value;
+    });
+    
+    // ==================== VIDEO ====================
+    document.getElementById('play-local').addEventListener('click', async () => {
+        const file = document.getElementById('video-file').files[0];
+        if (!file) { alert('Video tanlang!'); return; }
+        
+        const width = parseInt(document.getElementById('video-width').value);
+        const outputPre = document.getElementById('video-content');
+        
+        if (currentVideo) {
+            currentVideo.pause();
+            if (animationId) cancelAnimationFrame(animationId);
+        }
+        
+        currentVideo = document.createElement('video');
+        currentVideo.src = URL.createObjectURL(file);
+        currentVideo.loop = true;
+        currentVideo.muted = true;
+        
+        currentVideo.addEventListener('loadeddata', () => {
+            startVideoAscii(currentVideo, width, outputPre);
+        });
+        
+        currentVideo.load();
+    });
+    
+    document.getElementById('play-url').addEventListener('click', async () => {
+        const url = document.getElementById('video-url').value;
+        if (!url) { alert('URL kiriting!'); return; }
+        
+        const width = parseInt(document.getElementById('video-width').value);
+        const outputPre = document.getElementById('video-content');
+        
+        if (currentVideo) {
+            currentVideo.pause();
+            if (animationId) cancelAnimationFrame(animationId);
+        }
+        
+        currentVideo = document.createElement('video');
+        currentVideo.src = url;
+        currentVideo.loop = true;
+        currentVideo.muted = true;
+        currentVideo.crossOrigin = 'Anonymous';
+        
+        currentVideo.addEventListener('loadeddata', () => {
+            startVideoAscii(currentVideo, width, outputPre);
+        });
+        
+        currentVideo.load();
+    });
+    
+    // ==================== RASM ====================
+    let currentAscii = '';
+    let currentAsciiHtml = '';
+    
+    document.getElementById('convert-image').addEventListener('click', async () => {
+        const file = document.getElementById('image-file').files[0];
+        if (!file) { alert('Rasm tanlang!'); return; }
+        
+        const width = parseInt(document.getElementById('ascii-width').value);
+        const method = document.getElementById('ascii-method').value;
+        
+        const img = await loadImageFromFile(file);
+        const ascii = imageToAscii(img, width, method);
+        
+        const outputPre = document.getElementById('image-content');
+        
+        if (method === 'color') {
+            outputPre.innerHTML = ascii;
+            currentAsciiHtml = ascii;
+            currentAscii = ascii.replace(/<[^>]*>/g, '');
+        } else {
+            outputPre.textContent = ascii;
+            currentAscii = ascii;
+            currentAsciiHtml = ascii;
+        }
+    });
+    
+    document.getElementById('save-image').addEventListener('click', () => {
+        if (!currentAscii) { alert('Avval rasmni ASCII ga o\'tkazing!'); return; }
+        
+        const blob = new Blob([currentAscii], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `ascii_art_${Date.now()}.txt`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        alert('✅ Fayl saqlandi!');
+    });
+    
+    // ==================== YOUTUBE ====================
+    document.getElementById('fetch-youtube').addEventListener('click', async () => {
+        const url = document.getElementById('youtube-url').value;
+        const width = parseInt(document.getElementById('youtube-width').value);
+        const statusDiv = document.getElementById('youtube-status');
+        const outputPre = document.getElementById('youtube-content');
+        
+        if (!url) { alert('YouTube havolasini kiriting!'); return; }
+        
+        const videoId = getYouTubeId(url);
+        if (!videoId) { alert('Noto\'g\'ri YouTube havolasi!'); return; }
+        
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '⏳ Rasm yuklanmoqda...';
+        outputPre.textContent = 'Yuklanmoqda...';
+        
+        try {
+            const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            const img = await loadImageFromUrl(thumbnailUrl);
+            const ascii = imageToAscii(img, width, 'mono');
+            outputPre.textContent = ascii;
+            statusDiv.innerHTML = '✅ Tugallandi!';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 2000);
+        } catch (error) {
+            statusDiv.innerHTML = `❌ Xatolik: ${error.message}`;
+        }
+    });
+    
+    // ==================== KAMERA ====================
+    document.getElementById('capture-photo').addEventListener('click', () => {
+        document.getElementById('camera-input').click();
+    });
+    
+    document.getElementById('camera-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const img = await loadImageFromFile(file);
+        const ascii = imageToAscii(img, 100, 'mono');
+        
+        document.getElementById('camera-content').textContent = ascii;
+        
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = '💾 Saqlash';
+        saveBtn.style.marginTop = '10px';
+        saveBtn.onclick = () => {
+            const blob = new Blob([ascii], {type: 'text/plain'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `camera_ascii_${Date.now()}.txt`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        };
+        
+        const outputDiv = document.getElementById('camera-output');
+        const oldBtn = document.getElementById('camera-save-btn');
+        if (oldBtn) oldBtn.remove();
+        saveBtn.id = 'camera-save-btn';
+        outputDiv.appendChild(saveBtn);
+    });
+    
+    console.log('✅ ASCII Media Studio yuklandi! Kenglik 200px ga sozlangan.');
+</script>
+</body>
+</html>
