@@ -251,8 +251,8 @@ of this software and associated documentation files...
 
 👨‍💻 Muallif
 
-· GitHub: @YOUR_USERNAME
-· Telegram: @YOUR_TELEGRAM
+· GitHub: @hackeruz11
+· Telegram: @boburbek_hacker
 
 ---
 
@@ -266,7 +266,7 @@ of this software and associated documentation files...
 
 Savollar yoki muammolar uchun:
 
-· GitHub Issues - https://github.com/YOUR_USERNAME/ascii-media-studio/issues
+· GitHub Issues - https://github.com/hackeruz11/ascii/issues
 
 ---
 
